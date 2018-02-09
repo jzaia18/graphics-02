@@ -1,20 +1,25 @@
-$RESOLUTION = 500
+## Global Variables
+
+$RESOLUTION = 500 # All images are squares
 $GRID = Array.new($RESOLUTION)
 $DEBUGGING = true
 $OUTFILE = "image.ppm"
+$BACKGROUND_COLOR = [0, 0, 0] # [r, g, b]
+
 
 ## Create board
 for i in (0...$RESOLUTION)
   $GRID[i] = Array.new($RESOLUTION)
   for j in (0...$RESOLUTION)
-    $GRID[i][j] = [0, 0, 0]
+    $GRID[i][j] = $BACKGROUND_COLOR
   end
 end
+
 
 ## Write GRID to OUTFILE
 def write_out()
   file = File.open($OUTFILE, 'w')
-  file.puts "P3 #$RESOLUTION #$RESOLUTION 255"
+  file.puts "P3 #$RESOLUTION #$RESOLUTION 255" #Header in 1 line
   for row in $GRID
     for pixel in row
       for rgb in pixel
@@ -28,10 +33,12 @@ def write_out()
   file.close()
 end
 
+
 # Plot a point on GRID (from top left)
-def plot(x, y, r:255, g:255, b:255) $GRID[y][x] = [r, g, b] end
+def plot(x, y, r:255, g:255, b:255) $GRID[y%$RESOLUTION][x%$RESOLUTION] = [r, g, b] end
 # Plot a point on GRID (from bottom left)
-def plot_bot(x, y, r:255, g:255, b:255) plot(x, $RESOLUTION - y, r:255, g:255, b:255) end
+def plot_bot(x, y, r:255, g:255, b:255) plot(x%$RESOLUTION, ($RESOLUTION - y)%$RESOLUTION, r:255, g:255, b:255) end
+
 
 def line(x0, y0, x1, y1, r:255, g:255, b:255)
   # x0 is always left of x1
@@ -44,6 +51,7 @@ def line(x0, y0, x1, y1, r:255, g:255, b:255)
     y = y0
     d = 2*dy - dx
 
+    ## Begin actual algorithm:
     if dy <= 0 #if the line is in octants I or II
       if dy.abs <= dx #octant I
         puts "Drawing line in Octant I" if $DEBUGGING
@@ -56,6 +64,7 @@ def line(x0, y0, x1, y1, r:255, g:255, b:255)
           x+=1
           d-=2*dy
         end
+
       else #octant II
         puts "Drawing line in Octant II" if $DEBUGGING
         while y >= y1
@@ -68,7 +77,9 @@ def line(x0, y0, x1, y1, r:255, g:255, b:255)
           d+=2*dx
         end
       end
+
     else #if the line is in octants VII or VIII
+
       if dy >= dx #octant VII
         puts "Drawing line in Octant VII" if $DEBUGGING
         while y <= y1
@@ -80,11 +91,11 @@ def line(x0, y0, x1, y1, r:255, g:255, b:255)
           y+=1
           d+=2*dx
         end
+
       else #octant VIII
-        puts "Drawing line in Octant VII" if $DEBUGGING
+        puts "Drawing line in Octant VIII" if $DEBUGGING
         while x <= x1
           plot(x, y, r:r, g:g, b:b)
-          puts d
           if d > 0
             y+=1
             d-=2*dx
@@ -97,9 +108,9 @@ def line(x0, y0, x1, y1, r:255, g:255, b:255)
   end
 end
 
-## Main
+##========================== MAIN ==========================
 
-##========================== Test cases ==========================
+##~~~~~~~~~~~~~~~~~~~ Test cases ~~~~~~~~~~~~~~~~~~~
 line(250, 250, 499, 240, r:0) #Octant I
 line(250, 250, 499, 200, r:0) #Octant I
 line(250, 250, 499, 150, r:0) #Octant I
