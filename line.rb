@@ -69,7 +69,30 @@ def line(x0, y0, x1, y1, r:255, g:255, b:255)
         end
       end
     else #if the line is in octants VII or VIII
-
+      if dy >= dx #octant VII
+        puts "Drawing line in Octant VII" if $DEBUGGING
+        while y <= y1
+          plot(x, y, r:r, g:g, b:b)
+          if d > 0
+            x+=1
+            d-=2*dy
+          end
+          y+=1
+          d+=2*dx
+        end
+      else #octant VIII
+        puts "Drawing line in Octant VII" if $DEBUGGING
+        while x <= x1
+          plot(x, y, r:r, g:g, b:b)
+          puts d
+          if d > 0
+            y+=1
+            d-=2*dx
+          end
+          x+=1
+          d+=2*dy
+        end
+      end
     end
   end
 end
@@ -83,14 +106,18 @@ line(250, 250, 499, 150, r:0) #Octant I
 line(250, 250, 260, 0, g:0) #Octant II
 line(250, 250, 350, 0, g:0) #Octant II
 line(250, 250, 400, 0, g:0) #Octant II
-#line(1, 99, 99, 1) #Octant VII
-#line(1, 99, 99, 1) #Octant VIII
+line(250, 250, 260, 499, b:0) #Octant VII
+line(250, 250, 290, 499, b:0) #Octant VII
+line(250, 250, 400, 499, b:0) #Octant VII
+line(250, 250, 499, 275) #Octant VIII
+line(250, 250, 499, 400) #Octant VIII
+line(250, 250, 499, 450) #Octant VIII
 
 ## literal edge cases
-line(0, 499, 499, 0, r:0)
-line(250, 499, 250, 0, g:0)
-# line(1, 10, 99, 10, r:0, b:0)
-# line(1, 1, 99, 99)
+line(0, 499, 499, 0, r:0) #Octant I edge
+line(250, 499, 250, 0, g:0) #Octant II edge
+line(0, 0, 499, 499, b:0) #Octant VII edge
+line(0, 250, 499, 250) #Octant VIII edge
 
 
 write_out()
