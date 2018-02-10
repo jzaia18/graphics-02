@@ -6,6 +6,7 @@ cat: all
 
 convert: all
 	convert image.ppm image.png
+	rm image.ppm
 
 display: convert
 	display image.png
